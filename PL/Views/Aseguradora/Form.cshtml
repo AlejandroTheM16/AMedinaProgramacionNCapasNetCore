@@ -1,0 +1,117 @@
+﻿@model ML.Aseguradora
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Form</h2>
+
+<div class="row">
+    <div class="container">
+        <div class="col-md-12">
+            <h2>Aseguradora</h2>
+            <h5>Ingrese los datos de aseguradora:</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @*Crea un salto de linea*@
+            <hr />
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Form", "Aseguradora", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+
+                <div hidden>
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.IdAseguradora)
+                        @Html.TextBoxFor(model => model.IdAseguradora, new { @class = "form-control", @id = "txtIdAseguradora" })
+                        @Html.ValidationMessageFor(model => model.IdAseguradora)
+
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.Nombre)
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "txtNombre" })
+                        @Html.ValidationMessageFor(model => model.Nombre)
+
+                    </div>
+                </div>
+
+
+                <div hidden>
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.FechaCreacion)
+                        @Html.TextBoxFor(model => model.FechaCreacion, new { @class = "form-control", @id = "txtFechaCreacion" })
+                        @Html.ValidationMessageFor(model => model.FechaCreacion)
+
+                    </div>
+                </div>
+
+                <div hidden>
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.FechaModificacion)
+                        @Html.TextBoxFor(model => model.FechaModificacion, new { @class = "form-control", @id = "txtFechaModificacion" })
+                        @Html.ValidationMessageFor(model => model.FechaModificacion)Object 
+
+                    </div>
+                </div>
+
+
+                 <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.Usuario.Id_Usuario)
+                        @Html.DropDownListFor(model => model.Usuario.Id_Usuario, new SelectList(Model.Usuario.Usuarios, "Id_Usuario","UserName"),"Selecciona el usuario",new {@class="form-control", @id = "ddlUsuario"})                 
+                        @Html.ValidationMessageFor(model => model.Usuario.Id_Usuario)                        
+
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+
+                        @Html.LabelFor(model=> model.Imagen)
+
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="basic-addon1"><i class="bi bi-card-image"></i></span>
+                            <input type='file' class="form-control" name="fuImage" onchange="readURL(this);" />
+                        </div>
+
+                        @if (Model.Imagen != null)
+                        {
+
+                            <img id="Img" src="data:image/*;base64,Model.Imagen" style="width:auto ; height:100px" />
+
+                        }
+                        else
+                        {
+                            <img id="Img" src="~/imagenes/Defautas.jpg" style="width:auto ; height:100px" />
+                        }
+
+                </div>       
+               
+
+                <div class="col">
+                    <div class="col-md-3">
+                        <input type="submit" value="Guardar" class="btn btn-success" />
+                        @Html.ActionLink("Regresar", "GetAll", "Aseguradora", htmlAttributes: new { @class = "btn btn-danger" })
+                    </div>
+                </div>
+
+            }
+
+
+        </div>
+    </div>
+
+
+
+
+</div>
