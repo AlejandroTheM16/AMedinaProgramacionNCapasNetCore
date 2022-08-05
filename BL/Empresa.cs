@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +15,6 @@ namespace BL
         public static ML.Result GetAll() {
 
             ML.Result result = new ML.Result();
-
 
             try
             {
@@ -102,95 +103,40 @@ namespace BL
 
         public static ML.Result Add(ML.Empresa empresa) {
 
+
             ML.Result result = new ML.Result();
-            StreamReader archivo = new StreamReader(@"C:\Users\digis\Documents\LayoutEmpresa.txt");
 
-            string line;
-            ML.Result resultErrores = new ML.Result();
-            resultErrores.Objects = new List<object>();
-
-            line = archivo.ReadLine();
-
-            while ((line = archivo.ReadLine()) != null)
+            try
             {
 
-                string[] datos = line.Split('|');
-
-                //ML.Empresa empresa = new ML.Empresa();
-
-                empresa.Nombre = datos[0];
-                empresa.Telefono = datos[1];
-                empresa.Email = datos[2];
-                empresa.DireccionWeb = datos[3];
-
-                result = BL.Empresa.Add(empresa);
-
-                if (result.Correct == false)
+                using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext())
                 {
 
-                    resultErrores.Objects.Add(
-                        "No se inserto el Nombre: " + empresa.Nombre + "\n" +
-                        "No se inserto el Telefono: " + empresa.Telefono + "\n" +
-                        "No se inserto el Email: " + empresa.Email + "\n" +
-                        "No se inserto la DireccionWeb: " + empresa.DireccionWeb + " " +
-                        result.Message
-                        );
+                    var query = context.Database.ExecuteSqlRaw($"EmpresaAdd '{empresa.Nombre}','{empresa.Telefono}'," +
+                        $"'{empresa.Email}','{empresa.DireccionWeb}','{empresa.Logo}'");
+
+
+                    if (query >= 1)
+                    {
+                        result.Correct = true;
+                    }
+                    else
+                    {
+                        result.Correct = false;
+                    }
+
                 }
 
             }
-
-            archivo.Close();
-
-            if (resultErrores.Objects != null)
+            catch (Exception Ex)
             {
 
-                TextWriter tw = new StreamWriter(@"C:\Users\digis\Documents\ErroresCargaMasiva.txt");
-
-                foreach (string error in resultErrores.Objects)
-                {
-                    tw.WriteLine(error);
-                    Console.WriteLine(error);
-                }
-
-                tw.Close();
-
+                result.Correct = false;
+                result.Message = Ex.Message;
+                result.Ex = Ex;
             }
 
             return result;
-
-            //ML.Result result = new ML.Result();
-
-            //try
-            //{
-
-            //    using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext())
-            //    {
-
-            //        var query = context.Database.ExecuteSqlRaw($"EmpresaAdd '{empresa.Nombre}','{empresa.Telefono}'," +
-            //            $"'{empresa.Email}','{empresa.DireccionWeb}','{empresa.Logo}'");
-
-
-            //        if (query >= 1)
-            //        {
-            //            result.Correct = true;
-            //        }
-            //        else
-            //        {
-            //            result.Correct = false;
-            //        }
-
-            //    }
-
-            //}
-            //catch (Exception Ex)
-            //{
-
-            //    result.Correct = false;
-            //    result.Message = Ex.Message;
-            //    result.Ex = Ex;
-            //}
-
-            //return result;
 
         }
 
@@ -268,6 +214,122 @@ namespace BL
 
             return result;        
         
+        }
+
+        public static ML.Result ConvertirExcelDataTable(string connectionString)
+        {
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (OleDbConnection context = new OleDbConnection(connectionString))
+                {
+                    string query = "SELECT * FROM []";
+                    using (OleDbCommand cmd = new OleDbCommand())
+                    {
+                        cmd.CommandText = query;
+                        cmd.Connection = context;
+
+                        OleDbDataAdapter da = new OleDbDataAdapter();
+                        da.SelectCommand = cmd;
+
+                        DataTable tableEmpresa = new DataTable();
+
+                        da.Fill(tableEmpresa);
+
+                        if (tableEmpresa.Rows.Count > 0)
+                        {
+                            result.Objects = new List<object>();
+
+                            foreach (DataRow row in tableEmpresa.Rows)
+                            {
+                                ML.Empresa empresa = new ML.Empresa();
+                                empresa.Nombre = row[0].ToString();
+                                empresa.Telefono = row[1].ToString();
+                                empresa.Email = row[2].ToString();                                
+                                empresa.DireccionWeb = row[3].ToString();
+                                //empresa.Logo = row[4].ToString();
+
+
+                                result.Objects.Add(empresa);
+                            }
+                            result.Correct = true;
+                        }
+                        result.Object = tableEmpresa;
+
+                        if (tableEmpresa.Rows.Count > 1)
+                        {
+                            result.Correct = true;
+                        }
+                        else
+                        {
+                            result.Correct = false;
+                            result.Message = "No existen registros en el excel";
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+                result.Correct = false;
+                result.Message = ex.Message;
+
+            }
+            return result;
+        }
+
+        public static ML.Result ValidarExcel(List<object> Objects)
+        {
+            ML.Result result = new ML.Result();
+            try
+            {
+                result.Objects = new List<object>();
+                int i = 1;
+
+                foreach (ML.Empresa empresa in Objects)
+                {
+                    ML.ExcelErrores error = new ML.ExcelErrores();
+                    error.IdRegistro = i;
+
+                    if (empresa.Nombre == "")
+                    {
+                        error.Message += "Ingrese el nombre ";
+                    }
+                    if (empresa.Telefono == "")
+                    {
+                        error.Message += "Ingrese el telefono";
+                    }
+                    if (empresa.Email == "")
+                    {
+                        error.Message += "Ingrese email";
+                    }
+                    if (empresa.DireccionWeb == "")
+                    {
+                        error.Message += "Ingrese direccion web";
+                    }
+                   
+
+                    if (error.Message != null)
+                    {
+                        result.Objects.Add(error);
+                    }
+
+                    i++;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+
+
+
+            return result;
         }
     }
 }

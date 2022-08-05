@@ -150,7 +150,9 @@
                         @Html.ValidationMessageFor(model => model.Empresa.IdEmpresa)                        
 
                     </div>
-                </div>                     
+                </div>          
+                
+                 @Html.HiddenFor(model => model.Action)
                
 
                 <div class="col">

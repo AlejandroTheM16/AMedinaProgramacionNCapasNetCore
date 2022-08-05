@@ -9,16 +9,18 @@ namespace BL
 {
     public class Empleado
     {
-        public static ML.Result GetAll() { 
+        public static ML.Result GetAll(ML.Empleado empleadoBusquedaAbierta) { 
         
             ML.Result result = new ML.Result();
+            
 
             try
             {
 
                 using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext()) {
 
-                    var query = context.Empleados.FromSqlRaw($"EmpleadoGetAll");
+                    var query = context.Empleados.FromSqlRaw($"EmpleadoGetAll {empleadoBusquedaAbierta.Empresa.IdEmpresa},'{empleadoBusquedaAbierta.Nombre}','{empleadoBusquedaAbierta.ApellidoPaterno}'," +
+                        $"'{empleadoBusquedaAbierta.ApellidoMaterno}'");
 
                     result.Objects = new List<object>();
 

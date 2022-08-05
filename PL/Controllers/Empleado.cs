@@ -7,22 +7,68 @@ namespace PL.Controllers
         public ActionResult GetAll()
         {
 
-
             ML.Empleado empleado = new ML.Empleado();
-            ML.Result result = BL.Empleado.GetAll();
+            empleado.Empresa = new ML.Empresa();
+            ML.Result resultEmpresa = BL.Empresa.GetAll();           
 
-            if (result.Correct)
-            {
-                empleado.Empleados = result.Objects;
+            
+            if (resultEmpresa.Correct) {
+
+                empleado.Nombre = (empleado.Nombre == null) ? "" : empleado.Nombre;
+                empleado.ApellidoPaterno = (empleado.ApellidoPaterno == null) ? "" : empleado.ApellidoPaterno;
+                empleado.ApellidoMaterno = (empleado.ApellidoMaterno == null) ? "" : empleado.ApellidoMaterno;
+                empleado.Empresa.IdEmpresa = (empleado.Empresa.IdEmpresa == null) ? 0 : empleado.Empresa.IdEmpresa;               
+                ML.Result result = BL.Empleado.GetAll(empleado);
+
+                if (result.Correct)
+                {
+                    empleado.Empleados = result.Objects;
+                    empleado.Empresa.Empresas = resultEmpresa.Objects;
+                }
+                else
+                {
+                    ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
+                    return View("Modal");
+                }
+
+                return View(empleado);
+
             }
-            else
-            {
 
-                ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
-                return View("Modal");
+            return View("Modal");
+
+        }
+
+        [HttpPost]
+        public ActionResult GetAll(ML.Empleado empleado)
+        {
+            
+            ML.Result resultEmpresa = BL.Empresa.GetAll();
+
+            empleado.Nombre = (empleado.Nombre == null) ? "" : empleado.Nombre;
+            empleado.ApellidoPaterno = (empleado.ApellidoPaterno == null) ? "" : empleado.ApellidoPaterno;
+            empleado.ApellidoMaterno = (empleado.ApellidoMaterno == null) ? "" : empleado.ApellidoMaterno;
+            empleado.Empresa.IdEmpresa = (empleado.Empresa.IdEmpresa == null) ? 0 : empleado.Empresa.IdEmpresa;
+
+            ML.Result result = BL.Empleado.GetAll(empleado);
+
+            if (resultEmpresa.Correct) {
+
+                if (result.Correct)
+                {
+                    empleado.Empleados = result.Objects;
+                    empleado.Empresa.Empresas = resultEmpresa.Objects;
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Ocurrio un error " + result.Message;
+                    return View("Modal");
+                }
+
+                return View(empleado);
             }
-            return View(empleado);
 
+            return View("Modal");
         }
 
 
@@ -35,31 +81,43 @@ namespace PL.Controllers
 
             ML.Result resultEmpresa = BL.Empresa.GetAll();
 
-            if (NumeroEmpleado == null)
-            {
-                empleado.Empresa.Empresas = resultEmpresa.Objects;
-                return View(empleado);
-            }
-            else
+            if (resultEmpresa.Correct)
             {
 
-                ML.Result result = BL.Empleado.GetById(NumeroEmpleado);
-
-                if (result.Correct)
+                if (NumeroEmpleado == null)
                 {
-                    empleado = (ML.Empleado)result.Object;
                     empleado.Empresa.Empresas = resultEmpresa.Objects;
+                    empleado.Action = "Add";
                     return View(empleado);
-
                 }
                 else
                 {
 
-                    ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
-                    return View("Modal");
+                    ML.Result result = BL.Empleado.GetById(NumeroEmpleado);
+
+                    if (result.Correct)
+                    {
+                        empleado = (ML.Empleado)result.Object;
+                        empleado.Empresa.Empresas = resultEmpresa.Objects;
+                        empleado.Action = "Update";
+                        return View(empleado);
+
+                    }
+                    else
+                    {
+
+                        ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
+                        return View("Modal");
+
+                    }
 
                 }
 
+            }
+            else {
+
+                ViewBag.Mensaje = "Ocurrio un error al realizar la consulta" + resultEmpresa.Message;
+                return View("Modal");
             }
 
         }
@@ -75,7 +133,7 @@ namespace PL.Controllers
 
             }
 
-            if (empleado.NumeroEmpleado == null)
+            if (empleado.Action == "Add")
             {
 
                 ML.Result result = BL.Empleado.Add(empleado);
@@ -93,19 +151,29 @@ namespace PL.Controllers
             }
             else {
 
-                ML.Result result = BL.Empleado.Update(empleado);
-
-                if (result.Correct)
+                if (empleado.Action == "Update")
                 {
-                    ViewBag.Mensaje = "-Registro actualizado-" + result.Message;
-                    return View("Modal");
-                }
-                else
-                {
-                    ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
-                    return View("Modal");
-                }
 
+                    ML.Result result = BL.Empleado.Update(empleado);
+
+                    if (result.Correct)
+                    {
+                        ViewBag.Mensaje = "-Registro actualizado-" + result.Message;
+                        return View("Modal");
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = "¡Ocurrio un error!" + result.Message;
+                        return View("Modal");                        
+                    }
+
+                }
+                else {
+
+                    ViewBag.Mensaje = "Accion no reconocida";
+                     
+                }
+                    
             }
 
             return View("Modal");

@@ -20,8 +20,8 @@ namespace ML
         public string? FechaIngreso { get; set; }
         public string? Foto { get; set; }
         public ML.Empresa Empresa { get; set; }
-
         public List<object> Empleados { get; set; }
+        public string? Action { get; set; }
 
     }
 }

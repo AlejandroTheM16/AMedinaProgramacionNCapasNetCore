@@ -25,4 +25,9 @@
     <ProjectReference Include="..\ML\ML.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CargaMasiva\" />
+    <Folder Include="wwwroot\Files\" />
+  </ItemGroup>
+
 </Project>
