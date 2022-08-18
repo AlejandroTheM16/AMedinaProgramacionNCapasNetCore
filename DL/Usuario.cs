@@ -9,6 +9,7 @@ namespace DL
         {
             Aseguradoras = new HashSet<Aseguradora>();
             Direccions = new HashSet<Direccion>();
+            Polizas = new HashSet<Poliza>();
         }
 
         public int IdUsuario { get; set; }
@@ -29,6 +30,7 @@ namespace DL
         public virtual Rol IdrolNavigation { get; set; } = null!;
         public virtual ICollection<Aseguradora> Aseguradoras { get; set; }
         public virtual ICollection<Direccion> Direccions { get; set; }
+        public virtual ICollection<Poliza> Polizas { get; set; }
 
         //Alias
         public string NombreRol { get; set; }
@@ -46,5 +48,6 @@ namespace DL
         public int IdMunicipio { get; set; }
         public int IdEstado { get; set; }
         public int IdPais { get; set; }
+
     }
 }

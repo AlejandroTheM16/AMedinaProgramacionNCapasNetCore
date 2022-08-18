@@ -14,7 +14,7 @@ namespace DL
 
         public virtual Usuario IdUsuarioNavigation { get; set; } = null!;
 
-        //Alias 
+        //Alias aseguradora
         public string? NombreUsuario { get; set; }
     }
 }

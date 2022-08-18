@@ -1,0 +1,75 @@
+﻿@model ML.Dependiente
+@{
+    ViewBag.Title = "DependienteGetById";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Dependientes</h2>
+
+<div class="row">
+    <div class="col-md-12">
+        <h5>Seleccione un dependiente para editarlo o + para agregar...</h5>
+        <hr />
+    </div>
+</div>
+
+
+
+<div class="row">
+
+<div style="float:right;">
+    @Html.ActionLink("+", "Form", "EmpleadoDependiente", htmlAttributes: new { @class = "btn btn-success" })
+</div>
+
+</div>
+
+<br>
+
+<table class="table table-bordered table-responsive">
+    <thead>
+        <tr>
+            <td>Editar</td>
+            <td hidden>IdDependiente</td>
+            <td hidden>IdEmpleado</td>
+            <td>Nombre</td>
+            <td>Fecha de nacimiento</td>
+            <td>Estado Civil</td>
+            <td>Genero</td>
+            <td>Telefono</td>
+            <td>RFC</td>
+            <td hidden>IdDependienteTipo</td>
+            <td>DependienteTipo</td>
+            <td>Eliminar</td>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (ML.Dependiente dependiente in Model.Dependientes)
+         {
+                <tr>
+                 <td><a class="btn btn-warning glyphicon glyphicon-edit" href="@Url.Action("Form", "EmpleadoDependiente", new { IdDependiente = dependiente.IdDependiente })"></a></td>
+                 <td hidden>@dependiente.IdDependiente</td>
+                 <td hidden>@dependiente.Empleado.NumeroEmpleado</td> 
+                 <td>@dependiente.Nombre @dependiente.ApellidoPaterno @dependiente.ApellidoMaterno</td>
+                 <td>@dependiente.FechaNacimiento</td>  
+                 <td>@dependiente.EstadoCivil</td>  
+                 <td>@dependiente.Genero</td>  
+                 <td>@dependiente.RFC</td>                 
+                 <td>@dependiente.Telefono</td>
+                 <td hidden>@dependiente.DependienteTipo.IdDependienteTipo</td>  
+                 <td>@dependiente.DependienteTipo.Nombre</td>  
+
+                 @Html.HiddenFor(model => model.Empleado.NumeroEmpleado)
+
+
+                 <td><a class="btn btn-danger glyphicon glyphicon-trash" href="@Url.Action("Delete", "EmpleadoDependiente", new { IdDependiente= dependiente.IdDependiente})" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
+                </tr>
+
+         }        
+
+
+            
+        
+
+    </tbody>
+</table>

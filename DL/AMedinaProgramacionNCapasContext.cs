@@ -18,13 +18,17 @@ namespace DL
 
         public virtual DbSet<Aseguradora> Aseguradoras { get; set; } = null!;
         public virtual DbSet<Colonium> Colonia { get; set; } = null!;
+        public virtual DbSet<Dependiente> Dependientes { get; set; } = null!;
+        public virtual DbSet<DependienteTipo> DependienteTipos { get; set; } = null!;
         public virtual DbSet<Direccion> Direccions { get; set; } = null!;
         public virtual DbSet<Empleado> Empleados { get; set; } = null!;
         public virtual DbSet<Empresa> Empresas { get; set; } = null!;
         public virtual DbSet<Estado> Estados { get; set; } = null!;
         public virtual DbSet<Municipio> Municipios { get; set; } = null!;
         public virtual DbSet<Pai> Pais { get; set; } = null!;
+        public virtual DbSet<Poliza> Polizas { get; set; } = null!;
         public virtual DbSet<Rol> Rols { get; set; } = null!;
+        public virtual DbSet<SubPoliza> SubPolizas { get; set; } = null!;
         public virtual DbSet<Usuario> Usuarios { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -82,6 +86,75 @@ namespace DL
                     .HasForeignKey(d => d.IdMunicipio)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK__Colonia__IdMunic__70DDC3D8");
+            });
+
+            modelBuilder.Entity<Dependiente>(entity =>
+            {
+                entity.HasKey(e => e.IdDependiente)
+                    .HasName("PK__Dependie__366D0771BF60BD03");
+
+                entity.ToTable("Dependiente");
+
+                entity.Property(e => e.ApellidoMaterno)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ApellidoPaterno)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.EstadoCivil)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.FechaNacimiento).HasColumnType("datetime");
+
+                entity.Property(e => e.Genero)
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.IdEmpleado)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Rfc)
+                    .HasMaxLength(14)
+                    .IsUnicode(false)
+                    .HasColumnName("RFC");
+
+                entity.Property(e => e.Telefono)
+                    .HasMaxLength(15)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdDependienteTipoNavigation)
+                    .WithMany(p => p.Dependientes)
+                    .HasForeignKey(d => d.IdDependienteTipo)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Dependien__IdDep__3B40CD36");
+
+                entity.HasOne(d => d.IdEmpleadoNavigation)
+                    .WithMany(p => p.Dependientes)
+                    .HasForeignKey(d => d.IdEmpleado)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Dependien__IdEmp__3A4CA8FD");
+            });
+
+            modelBuilder.Entity<DependienteTipo>(entity =>
+            {
+                entity.HasKey(e => e.IdDependienteTipo)
+                    .HasName("PK__Dependie__2C220C62B6C864C8");
+
+                entity.ToTable("DependienteTipo");
+
+                entity.Property(e => e.IdDependienteTipo).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<Direccion>(entity =>
@@ -182,6 +255,9 @@ namespace DL
 
                 entity.ToTable("Empresa");
 
+                entity.HasIndex(e => e.Email, "UC_Email")
+                    .IsUnique();
+
                 entity.Property(e => e.DireccionWeb)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -247,6 +323,38 @@ namespace DL
                     .IsUnicode(false);
             });
 
+            modelBuilder.Entity<Poliza>(entity =>
+            {
+                entity.HasKey(e => e.IdPoliza)
+                    .HasName("PK__Poliza__8E3943B3BAF949A2");
+
+                entity.ToTable("Poliza");
+
+                entity.Property(e => e.FechaCreacion).HasColumnType("datetime");
+
+                entity.Property(e => e.FechaModificacion).HasColumnType("datetime");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.NumeroPoliza)
+                    .HasMaxLength(20)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdSubPolizaNavigation)
+                    .WithMany(p => p.Polizas)
+                    .HasForeignKey(d => d.IdSubPoliza)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Poliza__IdSubPol__31B762FC");
+
+                entity.HasOne(d => d.IdUsuarioNavigation)
+                    .WithMany(p => p.Polizas)
+                    .HasForeignKey(d => d.IdUsuario)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK__Poliza__IdUsuari__32AB8735");
+            });
+
             modelBuilder.Entity<Rol>(entity =>
             {
                 entity.HasKey(e => e.IdRol)
@@ -256,6 +364,20 @@ namespace DL
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(30)
+                    .IsUnicode(false);
+            });
+
+            modelBuilder.Entity<SubPoliza>(entity =>
+            {
+                entity.HasKey(e => e.IdSubPoliza)
+                    .HasName("PK__SubPoliz__91F56A98B5F18BD8");
+
+                entity.ToTable("SubPoliza");
+
+                entity.Property(e => e.IdSubPoliza).ValueGeneratedOnAdd();
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
             });
 

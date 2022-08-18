@@ -8,7 +8,7 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h5>Seleccione un empleado para editarlo o + para agregar...</h5>
+        <h5>Seleccione asignar para consultar los dependientes del empleado...</h5>
         <hr />
     </div>
 </div>
@@ -26,7 +26,7 @@
                     </div>
                 </div> 
 
-                <div class="col">
+                @*<div class="col">
                     <div class="col-md-4 col-12 col-sm-6">
                         @Html.LabelFor(model => model.Nombre)
                         @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "txtNombreUsuario" })
@@ -50,7 +50,7 @@
                         @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @id = "txtApellidoMaterno" })
                         @Html.ValidationMessageFor(model => model.ApellidoMaterno)
                     </div>
-                </div>
+                </div>*@
                  
 
                 <div class="col">
@@ -64,28 +64,18 @@
 </div>
 
 <div class="row">
-<div style="float:right;">
-    @Html.ActionLink("+", "Form", "EmpleadoDependiente", htmlAttributes: new { @class = "btn btn-success" })
-</div>
 
 <br>
 
 <table class="table table-bordered table-responsive">
     <thead>
         <tr>
-            <td>Editar</td>
+            <td>Asignar</td>
             <td hidden>NumeroEmpleado</td>
-            <td>RFC</td>
             <td>Nombre</td>
-            <td>Email</td>
-            <td>Telefono</td>
-            <td>Fecha de nacimiento</td>
-            <td>NSS</td>
-            <td>Fecha de ingreso</td>
-            <td>Foto</td>
             <td hidden>IdEmpresa</td>
             <td>Empresa</td>
-            <td>Eliminar</td>
+
 
         </tr>
     </thead>
@@ -93,34 +83,18 @@
 
         @foreach (ML.Empleado empleado in Model.Empleados)
         {
+            
+
             <tr>
-                <td><a class="btn btn-warning glyphicon glyphicon-edit" href="@Url.Action("Form", "EmpleadoDependiente", new { NumeroEmpleado = empleado.NumeroEmpleado })"></a></td>
+                <td><a class="btn btn-warning glyphicon glyphicon-edit" href="@Url.Action("DependienteGetById", "EmpleadoDependiente", new { NumeroEmpleado = empleado.NumeroEmpleado })"></a></td>
+
                 <td hidden>@empleado.NumeroEmpleado</td>
-                <td>@empleado.RFC</td>
                 <td>@empleado.Nombre @empleado.ApellidoPaterno @empleado.ApellidoMaterno</td>
-                <td>@empleado.Email</td>
-                <td>@empleado.Telefono</td>               
-                <td>@empleado.FechaNacimiento</td>
-                <td>@empleado.NSS</td>
-                <td>@empleado.FechaIngreso</td>
-
-                @if (empleado.Foto == "" || empleado.Foto == null)
-                {
-                   
-                    <td> <img id="Img" src="~/imagenes/imgdefault.jpg" style="width:auto ; height:100px" /></td>
-                }
-                else
-                {                    
-                     <td> <img id="Img" src="data:image/*;base64,@empleado.Foto" style="width:auto ; height:100px" /></td>
-                }
-
                 <td hidden>@empleado.Empresa.IdEmpresa</td>  
+                <td>@empleado.Empresa.Nombre</td>        
 
-                <td>@empleado.Empresa.Nombre</td>              
-                              
-
-
-                <td><a class="btn btn-danger glyphicon glyphicon-trash" href="@Url.Action("Delete", "EmpleadoDependiente", new { NumeroEmpleado= empleado.NumeroEmpleado})" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
+                
+                                              
             </tr>
         }
 

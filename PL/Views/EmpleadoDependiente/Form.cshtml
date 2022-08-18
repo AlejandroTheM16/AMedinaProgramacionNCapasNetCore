@@ -1,0 +1,170 @@
+﻿@model ML.Dependiente
+@{
+    ViewBag.Title = "Form";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="~/Scripts/jquery-3.4.1.js" type="text/javascript"></script>
+
+
+<h2>Form</h2>
+
+<div class="row">
+    <div class="container">
+        <div class="col-md-12">
+            <h2>Usuario</h2>
+            <h5>Ingrese los datos del dependiente:</h5>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            @*Crea un salto de linea*@
+            <hr />
+        </div>
+    </div>
+    
+
+    <div class="row">
+        <div class="col-md-12">
+            @using (Html.BeginForm("Form", "EmpleadoDependiente", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+
+                <div hidden>
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.IdDependiente)
+                        @Html.TextBoxFor(model => model.IdDependiente, new { @class = "form-control", @id = "txtIdUsuario" })
+                        @Html.ValidationMessageFor(model => model.IdDependiente)
+
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">                        
+                        <span class="glyphicon glyphicon-user"></span>
+                        @Html.LabelFor(model => model.Nombre)
+                        @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "txtNombre", @onkeypress = "return SoloLetras(event, 'lblErrorNombre')" })
+                        @Html.ValidationMessageFor(model => model.Nombre)
+                        <label id="lblErrorNombre"></label>
+
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-user"></span>
+                        @Html.LabelFor(model => model.ApellidoPaterno)
+                        @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @id = "txtApellidoPaterno", @onkeypress = "return SoloLetras(event, 'lblErrorApellidoPaterno')" })
+                        @Html.ValidationMessageFor(model => model.ApellidoPaterno)
+                        <label id="lblErrorApellidoPaterno"></label>
+
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-user  "></span>
+                        @Html.LabelFor(model => model.ApellidoMaterno)
+                        @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @id = "txtApellidoMaterno", @onkeypress = "return SoloLetras(event, 'lblErrorApellidoMaterno')" })
+                        @Html.ValidationMessageFor(model => model.ApellidoMaterno)
+                        <label id="lblErrorApellidoMaterno"></label>
+
+                    </div>
+                </div>
+
+                
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                        @Html.LabelFor(model => model.FechaNacimiento)
+                        @Html.TextBoxFor(model => model.FechaNacimiento, new { @class = "form-control", @id = "txtFechaNacimiento", placeholder = "DD-MM-AAAA" })
+                        @Html.ValidationMessageFor(model => model.FechaNacimiento)
+
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-envelope"></span>
+                        @Html.LabelFor(model => model.EstadoCivil)
+                        @Html.TextBoxFor(model => model.EstadoCivil, new { @class = "form-control", @id = "txtEmail", placeholder = "Soltero/Casado/Viudo" })
+                        @Html.ValidationMessageFor(model => model.EstadoCivil)
+
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-question-sign"></span>
+                        @Html.LabelFor(model => model.Genero)                       
+                        @Html.TextBoxFor(model => model.Genero, new { @class = "form-control", @id = "txtGenero", @onkeypress = "return SoloLetras(event, 'lblErrorGenero')" })
+                        @Html.ValidationMessageFor(model => model.Genero)
+                        <label id="lblErrorGenero"></label>
+                    </div>
+                </div>
+
+                
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-phone"></span>
+                        @Html.LabelFor(model => model.Telefono)
+                        @Html.TextBoxFor(model => model.Telefono, new { @class = "form-control", @id = "txtTelefono",  @onkeypress = "return SoloNumeros(event, 'lblErrorTelefono')" })
+                        @Html.ValidationMessageFor(model => model.Telefono)
+                        <label id="lblErrorTelefono"></label>
+
+                    </div>
+                </div>
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-user"></span>
+                        @Html.LabelFor(model => model.RFC)
+                        @Html.TextBoxFor(model => model.RFC, new { @class = "form-control", @id = "txtUsername" })
+                        @Html.ValidationMessageFor(model => model.RFC)
+
+                    </div>
+                </div>
+
+
+
+                <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                        <span class="glyphicon glyphicon-info-sign"></span>
+                        @Html.LabelFor(model => model.DependienteTipo.IdDependienteTipo)
+                        @Html.DropDownListFor(model => model.DependienteTipo.IdDependienteTipo, new SelectList(Model.DependienteTipo.DependienteTipos, "IdDependienteTipo", "Nombre"), "Selecciona un tipo de dependiente", new { @class = "form-control", @id = "ddlRol" })
+                        @Html.ValidationMessageFor(model => model.DependienteTipo.IdDependienteTipo)
+
+                    </div>
+                </div>           
+
+
+
+                
+                <div hidden>
+                    <div class="col-md-4 col-12 col-sm-6">
+                        @Html.LabelFor(model => model.Empleado.NumeroEmpleado)
+                        @Html.TextBoxFor(model => model.Empleado.NumeroEmpleado, new { @class = "form-control", @id = "txtStatus" })
+                        @Html.ValidationMessageFor(model => model.Empleado.NumeroEmpleado)
+                    </div>
+                </div>
+
+
+
+                <div class="col">
+                    <div class="col-md-3">
+                        <input type="submit" value="Guardar" class="btn btn-success" />
+                        @Html.ActionLink("Regresar", "DependienteGetById", "EmpleadoDependiente", htmlAttributes: new { @class = "btn btn-danger" })
+                    </div>
+                </div>
+
+            }
+
+
+        </div>
+    </div>    
+
+</div>  

@@ -5,7 +5,12 @@ namespace DL
 {
     public partial class Empleado
     {
-        public string NumeroEmpleado { get; set; }
+        public Empleado()
+        {
+            Dependientes = new HashSet<Dependiente>();
+        }
+
+        public string NumeroEmpleado { get; set; } = null!;
         public string? Rfc { get; set; }
         public string Nombre { get; set; } = null!;
         public string ApellidoPaterno { get; set; } = null!;
@@ -19,8 +24,9 @@ namespace DL
         public int IdEmpresa { get; set; }
 
         public virtual Empresa IdEmpresaNavigation { get; set; } = null!;
+        public virtual ICollection<Dependiente> Dependientes { get; set; }
 
-        //Alias
+        //Alias empleado
         public string NombreEmpresa { get; set; }
     }
 }
