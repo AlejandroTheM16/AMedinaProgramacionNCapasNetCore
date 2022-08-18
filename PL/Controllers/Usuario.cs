@@ -12,17 +12,48 @@ namespace PL.Controllers
             usuario.Nombre = (usuario.Nombre == null) ? "" : usuario.Nombre;
             usuario.ApellidoPaterno = (usuario.ApellidoPaterno == null) ? "" : usuario.ApellidoPaterno;
             usuario.ApellidoMaterno = (usuario.ApellidoMaterno == null) ? "" : usuario.ApellidoMaterno;
-            ML.Result result = BL.Usuario.GetAllEF(usuario);
+            //ML.Result result = BL.Usuario.GetAllEF(usuario);
 
-            if (result.Correct)
+            ML.Result resultApi = new ML.Result();
+            using (var client = new HttpClient())
             {
-                usuario.Usuarios = result.Objects;
+                client.BaseAddress = new Uri("http://localhost:5050/");
+
+                var responseTask = client.GetAsync("api/Usuario/GetAll");
+                responseTask.Wait();
+
+                var result = responseTask.Result;
+
+                if (result.IsSuccessStatusCode)
+                {
+                    var readTask = result.Content.ReadAsAsync<ML.Result>();
+                    readTask.Wait();
+
+                    resultApi.Objects = new List<Object>();
+
+                    foreach (var resultItem in readTask.Result.Objects) {
+
+                        ML.Usuario resultUsuario = Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(resultItem.ToString());
+                        resultApi.Objects.Add(resultUsuario);
+                       
+
+                    }
+
+                    
+                }
             }
-            else
-            {
-                ViewBag.Mensaje = "Ocurrio un error " + result.Message;
-                return View("Modal");
-            }
+
+            usuario.Usuarios = resultApi.Objects;
+
+            //if (result.Correct)
+            //{
+            //    usuario.Usuarios = result.Objects;
+            //}
+            //else
+            //{
+            //    ViewBag.Mensaje = "Ocurrio un error " + result.Message;
+            //    return View("Modal");
+            //}
             return View(usuario); //ACTION RESULT: Tipos de retorno EJEMPLO: ActionResult -> Vista en HTML
         }
 
@@ -74,29 +105,65 @@ namespace PL.Controllers
                 }
                 else
                 {
-
-                    ML.Result result = BL.Usuario.GetByIdEF(Id_Usuario.Value);
-
-
-                    if (result.Correct)
+                    ML.Result resultApi = new ML.Result();
+                    using (var client = new HttpClient())
                     {
-                        usuario = (ML.Usuario)result.Object;
-                        ML.Result resultEstado = BL.Estado.GetByIdPais(usuario.Direccion.Colonia.Municipio.Estado.Pais.IdPais);
-                        ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
-                        ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
-                        usuario.Rol.Rols = resultRol.Objects;
-                        usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
-                        usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
-                        usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
-                        usuario.Direccion.Colonia.Municipio.Estado.Pais.Paises = resultPais.Objects;
-                        return View(usuario);
+                        client.BaseAddress = new Uri("http://localhost:5050/");
 
+                        var responseTask = client.GetAsync("api/Usuario/GetById/?Id_Usuario="+Id_Usuario);
+                        responseTask.Wait();
+
+                        var result = responseTask.Result;
+
+                        if (result.IsSuccessStatusCode)
+                        {
+                            var readTask = result.Content.ReadAsAsync<ML.Result>();
+                            readTask.Wait();
+
+                            resultApi.Object = new List<Object>();
+                            
+
+                            var resultItem = readTask.Result.Object;
+
+                            ML.Usuario resultUsuario = Newtonsoft.Json.JsonConvert.DeserializeObject<ML.Usuario>(resultItem.ToString());
+                            
+                            resultApi.Object = resultUsuario;                         
+
+
+                        }
                     }
-                    else
-                    {
-                        ViewBag.Mensaje = "Ocurrio un error en la busqueda" + result.Message;
-                        return View("Modal");
-                    }
+
+                    usuario = (ML.Usuario)resultApi.Object;
+                    ML.Result resultEstado = BL.Estado.GetByIdPais(usuario.Direccion.Colonia.Municipio.Estado.Pais.IdPais);
+                    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    usuario.Rol.Rols = resultRol.Objects;
+                    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+                    usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                    usuario.Direccion.Colonia.Municipio.Estado.Pais.Paises = resultPais.Objects;
+
+                    //ML.Result result = BL.Usuario.GetByIdEF(Id_Usuario.Value);
+
+                    //if (result.Correct)
+                    //{
+                    //    usuario = (ML.Usuario)result.Object;
+                    //    ML.Result resultEstado = BL.Estado.GetByIdPais(usuario.Direccion.Colonia.Municipio.Estado.Pais.IdPais);
+                    //    ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                    //    ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                    //    usuario.Rol.Rols = resultRol.Objects;
+                    //    usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                    //    usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+                    //    usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                    //    usuario.Direccion.Colonia.Municipio.Estado.Pais.Paises = resultPais.Objects;
+                    //    return View(usuario);
+
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.Mensaje = "Ocurrio un error en la busqueda" + result.Message;
+                    //    return View("Modal");
+                    //}
 
                 }
 
@@ -110,50 +177,117 @@ namespace PL.Controllers
         public ActionResult Form(ML.Usuario usuario)
         {
 
-            IFormFile imagen = Request.Form.Files["fuImage"];
-            if (imagen != null)
-            {
-                byte[] ImagenByte = ConvertToBytes(imagen);
-                usuario.Imagen = Convert.ToBase64String(ImagenByte);
-
-            }
-
-
-            if (usuario.Id_Usuario == 0)
+            if (ModelState.IsValid)
             {
 
-                ML.Result result = BL.Usuario.AddEF(usuario);
-
-                if (result.Correct)
+                IFormFile imagen = Request.Form.Files["fuImage"];
+                if (imagen != null)
                 {
-                    ViewBag.Mensaje = "Registro existoso";                    
+                    byte[] ImagenByte = ConvertToBytes(imagen);
+                    usuario.Imagen = Convert.ToBase64String(ImagenByte);
+
+                }
+
+
+                if (usuario.Id_Usuario == 0)
+                {
+                    using (var client = new HttpClient()) {
+                    
+                        client.BaseAddress = new Uri("http://localhost:5050/");
+
+                        var postTask = client.PostAsJsonAsync<ML.Usuario>("api/Usuario/Add",usuario);
+                        postTask.Wait();
+
+                        var resultService = postTask.Result;
+
+                        if (resultService.IsSuccessStatusCode)
+                        {
+
+                            ViewBag.Mensaje = "Registro Exitoso";
+                            return View("Modal");
+                        }
+                        else {
+
+                            ViewBag.Mensaje = "Ocurrio un erro en la operacion";
+                            return View("Modal");
+                        }
+
+
+                    }
+                    //ML.Result result = BL.Usuario.AddEF(usuario);
+
+                    //if (result.Correct)
+                    //{
+                    //    ViewBag.Mensaje = "Registro existoso";
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.Mensaje = "Ocurrio un error" + result.Message;
+                    //    return View("Modal");
+                    //}
+
                 }
                 else
                 {
-                    ViewBag.Mensaje = "Ocurrio un error" + result.Message;
-                    return View("Modal");
-                }
 
-            }
-            else
-            {            
-                               
-                    ML.Result result = BL.Usuario.UpdateEF(usuario);
-
-                    if (result.Correct)
+                    using (var client = new HttpClient())
                     {
-                        ViewBag.Mensaje = "Actualizacion existosa";
+
+                        client.BaseAddress = new Uri("http://localhost:5050/");
+
+                        var postTask = client.PostAsJsonAsync<ML.Usuario>("api/Usuario/Update", usuario);
+                        postTask.Wait();
+
+                        var resultService = postTask.Result;
+
+                        if (resultService.IsSuccessStatusCode)
+                        {
+
+                            ViewBag.Mensaje = "Actualizacion Exitosa";
+                            return View("Modal");
+                        }
+                        else
+                        {
+
+                            ViewBag.Mensaje = "Ocurrio un erro en la operacion";
+                            return View("Modal");
+                        }
+
 
                     }
-                    else
-                    {
-                        ViewBag.Mensaje = "Ocurrio un error" + result.Message;
-                        return View("Modal");
-                    }                
-                
-            }
 
-            return View("Modal");
+                    //ML.Result result = BL.Usuario.UpdateEF(usuario);
+
+                    //if (result.Correct)
+                    //{
+                    //    ViewBag.Mensaje = "Actualizacion existosa";
+
+                    //}
+                    //else
+                    //{
+                    //    ViewBag.Mensaje = "Ocurrio un error" + result.Message;
+                    //    return View("Modal");
+                    //}
+
+                }
+
+                return View("Modal");
+
+            }
+            else {
+
+                ML.Result resultRol = BL.Rol.GetAllEF();
+                ML.Result resultPais = BL.Pais.GetAllEF();
+                ML.Result resultEstado = BL.Estado.GetByIdPais(usuario.Direccion.Colonia.Municipio.Estado.Pais.IdPais);
+                ML.Result resultMunicipio = BL.Municipio.GetByIdEstado(usuario.Direccion.Colonia.Municipio.Estado.IdEstado);
+                ML.Result resultColonia = BL.Colonia.GetByIdMunicipio(usuario.Direccion.Colonia.Municipio.IdMunicipio);
+                usuario.Rol.Rols = resultRol.Objects;
+                usuario.Direccion.Colonia.Colonias = resultColonia.Objects;
+                usuario.Direccion.Colonia.Municipio.Municipios = resultMunicipio.Objects;
+                usuario.Direccion.Colonia.Municipio.Estado.Estados = resultEstado.Objects;
+                usuario.Direccion.Colonia.Municipio.Estado.Pais.Paises = resultPais.Objects;
+                return View(usuario);
+            }
 
         }
 
@@ -166,24 +300,48 @@ namespace PL.Controllers
             if (Id_Usuario == 0)
             {
 
-                ViewBag.Mensaje = "Ocurrio un problema al eliminar el registro";
+                ViewBag.Mensaje = "No se encontro el registro en la base de datos";
                 return View("Modal");
 
             }
             else
             {
 
-                ML.Result result = BL.Usuario.DeleteEF(Id_Usuario.Value);
+                ML.Result resultApi = new ML.Result();
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri("http://localhost:5050/");
 
-                if (result.Correct)
-                {
-                    ViewBag.Mensaje = "Se elimino el usuario" + result.Message;
+                    var responseTask = client.GetAsync("api/Usuario/Delete/?IdUsuario=" + Id_Usuario);
+                    responseTask.Wait();
+
+                    var result = responseTask.Result;
+
+                    if (result.IsSuccessStatusCode)
+                    {
+                        var readTask = result.Content.ReadAsAsync<ML.Result>();
+                        readTask.Wait();                        
+
+                        ViewBag.Mensaje = "Se elimino el usuario";
+
+                    }
+                    else {
+
+                        ViewBag.Mensaje = "Ocurrio un error";
+
+                    }
                 }
-                else
-                {
-                    ViewBag.Mensaje = "Ocurrio un error" + result.Message;
-                    return View("Modal");
-                }
+                //ML.Result result = BL.Usuario.DeleteEF(Id_Usuario.Value);
+
+                //if (result.Correct)
+                //{
+                //    ViewBag.Mensaje = "Se elimino el usuario" + result.Message;
+                //}
+                //else
+                //{
+                //    ViewBag.Mensaje = "Ocurrio un error" + result.Message;
+                //    return View("Modal");
+                //}
 
 
             }

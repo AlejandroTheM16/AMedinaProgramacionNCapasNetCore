@@ -175,7 +175,7 @@ namespace BL
 
                     var query = context.Database.ExecuteSqlRaw($"UsuarioAdd '{usuario.Nombre}','{usuario.ApellidoPaterno}','{usuario.ApellidoPaterno}','{usuario.Genero}'," +
                         $"'{usuario.Correo}','{usuario.Telefono}','{usuario.FechaNacimiento}',{usuario.Rol.IdRol},'{usuario.UserName}','{usuario.Password}','{usuario.CURP}'," +
-                        $"'{usuario.Imagen}','{usuario.Direccion.Calle}','{usuario.Direccion.NumeroInterior}','{usuario.Direccion.NumeroExterior}',{usuario.Direccion.Colonia.IdColonia}");
+                        $"'{usuario.Imagen}',{usuario.Status==true},'{usuario.Direccion.Calle}','{usuario.Direccion.NumeroInterior}','{usuario.Direccion.NumeroExterior}',{usuario.Direccion.Colonia.IdColonia}");
 
 
                     if (query >= 1)

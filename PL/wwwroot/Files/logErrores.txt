@@ -1,0 +1,8 @@
+ No se inserto la empresa con el nombre:  TpLink
+ No se se inserto la empresa con el telefono: 6675432341
+ No se se inserto la empresa con el email: microsoft@microsoft.org
+ No se se inserto la empresa con la direccion web: www.tplinksis.com
+ No se inserto la empresa con el nombre:  Telcel
+ No se se inserto la empresa con el telefono: 5567432314
+ No se se inserto la empresa con el email: microsoft@microsoft.org
+ No se se inserto la empresa con la direccion web: www.telcel.com.mx

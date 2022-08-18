@@ -224,7 +224,7 @@ namespace BL
             {
                 using (OleDbConnection context = new OleDbConnection(connectionString))
                 {
-                    string query = "SELECT * FROM []";
+                    string query = "SELECT * FROM [Hoja1$]";
                     using (OleDbCommand cmd = new OleDbCommand())
                     {
                         cmd.CommandText = query;
@@ -257,7 +257,7 @@ namespace BL
                         }
                         result.Object = tableEmpresa;
 
-                        if (tableEmpresa.Rows.Count > 1)
+                        if (tableEmpresa.Rows.Count >= 1)
                         {
                             result.Correct = true;
                         }
@@ -299,15 +299,15 @@ namespace BL
                     }
                     if (empresa.Telefono == "")
                     {
-                        error.Message += "Ingrese el telefono";
+                        error.Message += "Ingrese el telefono ";
                     }
                     if (empresa.Email == "")
                     {
-                        error.Message += "Ingrese email";
+                        error.Message += "Ingrese email ";
                     }
                     if (empresa.DireccionWeb == "")
                     {
-                        error.Message += "Ingrese direccion web";
+                        error.Message += "Ingrese direccion web ";
                     }
                    
 
@@ -325,8 +325,6 @@ namespace BL
 
                 throw;
             }
-
-
 
 
             return result;

@@ -110,7 +110,27 @@
         </div>
     </div>
 
-
-
-
 </div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+
+        
+     function validateForm() {
+      let x = document.forms["Form"]["txtNombre"].value;
+       if (x == "") {
+        alert("Name must be filled out");
+         return false;
+       }
+     }       
+    
+    
+    </script>
+       
+
+
+
+}
+
+

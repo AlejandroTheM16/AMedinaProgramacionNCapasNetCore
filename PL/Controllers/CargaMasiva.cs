@@ -69,26 +69,30 @@ namespace PL.Controllers
                                 }
                                 else
                                 {
-                                    ViewBag.Message = "No se encontraron registros / Tenia Errores";
+                                    ViewBag.Mensaje = "No se encontraron registros / Tenia Errores ";
+                                    
                                 }
                             }
                         }
                         else
                         {
-                            ViewBag.Message = "Seleccione un archivo valido (.xlsx)";
+                            ViewBag.Mensaje = "Seleccione un archivo valido (.xlsx)";
+                            
                         }
 
 
                     }
                     else
                     {
-                        ViewBag.Mesaage = "No tiene datos el archivo";
+                        ViewBag.Mensaje = "No tiene datos el archivo";
+                        
                     }
 
                 }
                 else
                 {
-                    ViewBag.Mesaage = "Seleccione un archivo";
+                    ViewBag.Mensaje = "Seleccione un archivo";
+                    
                 }
 
             }
@@ -108,8 +112,8 @@ namespace PL.Controllers
                         ML.Result resultAdd = BL.Empresa.Add(empresaItem);
                         if (!resultAdd.Correct)
                         {
-                            resultErrores.Objects.Add("No se inserto la empresa con el nombre:  " + empresa.Nombre + "No se se inserto la empresa con el telefono: " + empresa.Telefono+
-                                "No se se inserto la empresa con el email: " + empresa.Email + "No se se inserto la empresa con la direccion web: " + empresa.DireccionWeb);
+                            resultErrores.Objects.Add(" No se inserto la empresa con el nombre:  " + empresaItem.Nombre + "\n No se se inserto la empresa con el telefono: " + empresaItem.Telefono+
+                                "\n No se se inserto la empresa con el email: " + empresaItem.Email + "\n No se se inserto la empresa con la direccion web: " + empresaItem.DireccionWeb);
                         }
                     }
 
@@ -124,18 +128,21 @@ namespace PL.Controllers
                                 writer.WriteLine(ln);
                             }
                         }
-                        ViewBag.Message = "Algunas empresas no han sido registradas correctamente";
+
+                        ViewBag.Mensaje = "Algunas empresas no han sido registradas correctamente!";
+                        
                     }
                     else
                     {
-                        ViewBag.Message = "Las Empresas han sido registradas correctamente";
+                        ViewBag.Mensaje("-Las Empresas han sido registradas correctamente-");
+                       
                     }
 
                 }
 
             }
 
-            return View();
+            return View("Modal");
         }
     }
 }
