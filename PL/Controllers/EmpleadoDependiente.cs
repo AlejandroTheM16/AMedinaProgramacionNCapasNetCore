@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PL.Controllers
 {
     public class EmpleadoDependiente : Controller
     {
+
+        const string SessionName = "NumeroEmpleado";
 
         [HttpGet]
         public ActionResult EmpleadoGetAll()
@@ -76,50 +79,55 @@ namespace PL.Controllers
         }
 
 
-        [HttpGet]
-        public ActionResult DependienteGetAll() { 
+        //[HttpGet]
+        //public ActionResult DependienteGetAll() { 
 
-            ML.Dependiente dependiente = new ML.Dependiente();
-            dependiente.Empleado = new ML.Empleado();
-            dependiente.DependienteTipo = new ML.DependienteTipo();
-            ML.Result resutlDependienteTipo = BL.DependienteTipo.GetAllEF();
+        //    ML.Dependiente dependiente = new ML.Dependiente();
+        //    dependiente.Empleado = new ML.Empleado();
+        //    dependiente.DependienteTipo = new ML.DependienteTipo();
+        //    ML.Result resutlDependienteTipo = BL.DependienteTipo.GetAllEF();
 
-            if (resutlDependienteTipo.Correct) {
+        //    if (resutlDependienteTipo.Correct) {
 
-                ML.Result result = BL.Dependiente.GetAllEF();
+        //        ML.Result result = BL.Dependiente.GetAllEF();
 
-                if (result.Correct)
-                {
+        //        if (result.Correct)
+        //        {
 
-                    dependiente.Dependientes = result.Objects;
-                    dependiente.DependienteTipo.DependienteTipos = resutlDependienteTipo.Objects;
+        //            dependiente.Dependientes = result.Objects;
+        //            dependiente.DependienteTipo.DependienteTipos = resutlDependienteTipo.Objects;
 
-                }
-                else {
+        //        }
+        //        else {
 
-                    ViewBag.Mensaje = "Ocurrio Un error al traer los datos"+ result.Message;
-                    return View("Modal");
-                }
+        //            ViewBag.Mensaje = "Ocurrio Un error al traer los datos"+ result.Message;
+        //            return View("Modal");
+        //        }
 
-                return View(dependiente);
-            }
+        //        return View(dependiente);
+        //    }
 
-            return View("Modal");
-        
-            
-        }
+        //    return View("Modal");
+
+
+        //}
 
         [HttpGet]
         public ActionResult DependienteGetById(string NumeroEmpleado) {
+
+
 
             ML.Dependiente dependiente = new ML.Dependiente();
             dependiente.Empleado = new ML.Empleado();
             //ML.Result resultEmpleado = BL.Empleado.GetById(NumeroEmpleado);
             dependiente.DependienteTipo = new ML.DependienteTipo();
             ML.Result resutlDependienteTipo = BL.DependienteTipo.GetAllEF();
+            HttpContext.Session.SetString(SessionName, NumeroEmpleado);
+
 
             if (NumeroEmpleado != null)
             {
+                
 
                 if (resutlDependienteTipo.Correct)
                 {
@@ -132,6 +140,7 @@ namespace PL.Controllers
                         dependiente.Dependientes = result.Objects;
                         //dependiente.Empleado.Empleados = resultEmpleado.Objects;
                         dependiente.DependienteTipo.DependienteTipos = resutlDependienteTipo.Objects;
+                       
                         return View(dependiente);
 
                     }
@@ -148,7 +157,8 @@ namespace PL.Controllers
             }
             else {
 
-                //dependiente.Empleado.Empleados = resultEmpleado.Objects;
+                //dependiente.Empleado.Empleados = resultEmpleado.Objects;             
+                
                 return View(dependiente);
 
             }
@@ -160,12 +170,91 @@ namespace PL.Controllers
         [HttpPost]
         public ActionResult Form(ML.Dependiente dependiente) {
 
-            if (dependiente.IdDependiente == null) {
+            HttpContext.Session.GetString(SessionName);
+
+            if (dependiente.IdDependiente == 0)
+            {
 
                 ML.Result result = BL.Dependiente.Add(dependiente);
+
+                if (result.Correct)
+                {
+
+                    ViewBag.Mensaje = "-Registro exitoso-";
+                    return View("Modal");
+
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Ocurrio un erro en la insercion! " + result.Message;
+                    return View("Modal");
+                }
+            }
+            else {            
+
+                ML.Result resultUpdate = BL.Dependiente.Update(dependiente);
+
+                if (resultUpdate.Correct)
+                {
+
+                    ViewBag.Mensaje = "-Actualizacion exitosa-";
+                    return View("Modal");
+
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Ocurrio un erro en la actualizacion! " + resultUpdate.Message;
+                    return View("Modal");
+                }
+
+         
+
+
             }
 
             return View(dependiente);
+        
+        }
+
+        [HttpGet]
+        public ActionResult Form(int? IdDependiente) {
+
+            ML.Dependiente dependiente = new ML.Dependiente();
+            dependiente.DependienteTipo = new ML.DependienteTipo();
+            dependiente.Empleado = new ML.Empleado();
+            ML.Result resultDependienteTipo = BL.DependienteTipo.GetAllEF();           
+
+
+            if (IdDependiente == null)
+            {
+                dependiente.Empleado.NumeroEmpleado = HttpContext.Session.GetString(SessionName);
+                dependiente.DependienteTipo.DependienteTipos = resultDependienteTipo.Objects;
+                return View(dependiente);
+
+            }
+            else {
+
+                ML.Result result = BL.Dependiente.GetByIdDependiente(IdDependiente.Value);
+
+                if (result.Correct)
+                {
+                    dependiente = (ML.Dependiente)result.Object;
+                    //dependiente.Dependientes = result.Objects;
+                    //dependiente.Empleado.Empleados = resultEmpleado.Objects;
+                    dependiente.DependienteTipo.DependienteTipos = resultDependienteTipo.Objects;
+                    return View(dependiente);
+
+                }
+                else
+                {
+
+                    ViewBag.Mensaje = "Ocurrio Un error al traer los datos" + result.Message;
+                    return View("Modal");
+                }
+
+                return View("Modal");
+
+            }
         
         }
 

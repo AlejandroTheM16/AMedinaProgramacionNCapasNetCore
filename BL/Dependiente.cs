@@ -72,6 +72,7 @@ namespace BL
         {
 
             ML.Result result = new ML.Result();
+            
 
             try
             {
@@ -81,7 +82,7 @@ namespace BL
                     var dependientes = context.Database.ExecuteSqlRaw($"DependienteAdd '{dependiente.Empleado.NumeroEmpleado}','{dependiente.Nombre}','{dependiente.ApellidoPaterno}','{dependiente.ApellidoMaterno}'," +
                         $"'{dependiente.FechaNacimiento}','{dependiente.EstadoCivil}','{dependiente.Genero}','{dependiente.Telefono}','{dependiente.RFC}',{dependiente.DependienteTipo.IdDependienteTipo}");
 
-                    if (dependientes > 1)
+                    if (dependientes >= 1)
                     {
 
                         result.Correct = true;
@@ -118,7 +119,7 @@ namespace BL
                     var dependientes = context.Database.ExecuteSqlRaw($"DependienteUpdate {dependiente.IdDependiente},'{dependiente.Empleado.NumeroEmpleado}','{dependiente.Nombre}','{dependiente.ApellidoPaterno}','{dependiente.ApellidoMaterno}'," +
                         $"'{dependiente.FechaNacimiento}','{dependiente.EstadoCivil}','{dependiente.Genero}','{dependiente.Telefono}','{dependiente.RFC}',{dependiente.DependienteTipo.IdDependienteTipo}");
 
-                    if (dependientes > 1)
+                    if (dependientes >= 1)
                     {
 
                         result.Correct = true;
@@ -198,6 +199,63 @@ namespace BL
 
             return result;
         
+        }
+
+
+        public static ML.Result GetByIdDependiente(int IdDependiente)
+        {
+
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext())
+                {
+
+                    var dependientes = context.Dependientes.FromSqlRaw($"DependienteGetByIdDependiente {IdDependiente}").AsEnumerable().FirstOrDefault();
+
+
+                    if (dependientes != null)                         
+                    {                      
+
+                            ML.Dependiente dependiente = new ML.Dependiente();
+                            dependiente.Empleado = new ML.Empleado();
+                            dependiente.DependienteTipo = new ML.DependienteTipo();
+
+                            dependiente.IdDependiente = dependientes.IdDependiente;
+                            dependiente.Empleado.NumeroEmpleado = dependientes.IdEmpleado;
+                            dependiente.Nombre = dependientes.Nombre;
+                            dependiente.ApellidoPaterno = dependientes.ApellidoPaterno;
+                            dependiente.ApellidoMaterno = dependientes.ApellidoMaterno;
+                            dependiente.FechaNacimiento = dependientes.FechaNacimiento.ToString();
+                            dependiente.EstadoCivil = dependientes.EstadoCivil;
+                            dependiente.Genero = dependientes.Genero;
+                            dependiente.Telefono = dependientes.Telefono;
+                            dependiente.RFC = dependientes.Rfc;
+                            dependiente.DependienteTipo.IdDependienteTipo = dependientes.IdDependienteTipo;
+                            dependiente.DependienteTipo.Nombre = dependientes.NombreTipo;
+                            dependiente.Empleado.Nombre = dependientes.NombreEmpleado;
+                            dependiente.Empleado.ApellidoPaterno = dependientes.ApellidoPaternoEmpleado;
+                            dependiente.Empleado.ApellidoMaterno = dependientes.ApellidoMaternoEmpleado;
+
+                            result.Object = dependiente;
+                        
+                    }
+
+                    result.Correct = true;
+                }
+
+            }
+            catch (Exception Ex)
+            {
+                result.Correct = false;
+                result.Message = Ex.Message;
+                result.Ex = Ex;
+
+            }
+
+            return result;
+
         }
 
 

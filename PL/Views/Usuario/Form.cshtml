@@ -76,45 +76,18 @@
 
                 <div class="col">
                     <div class="col-md-4 col-12 col-sm-6">
-                        <span class="glyphicon glyphicon-question-sign"></span>
-                        @Html.LabelFor(model => model.Genero)                       
-                        @Html.TextBoxFor(model => model.Genero, new { @class = "form-control", @id = "txtGenero", @onkeypress = "return SoloLetras(event, 'lblErrorGenero')" })
+                        @Html.LabelFor(model => model.Genero)
+                        <br/>
+                        <label for="txtSexo">Femenino</label>
+                        @Html.RadioButtonFor(model => model.Genero, "M")
+                        <label for="txtSexo">Masculino</label>
+                        @Html.RadioButtonFor(model => model.Genero, "H")
                         @Html.ValidationMessageFor(model => model.Genero)
-                        <label id="lblErrorGenero"></label>
-
-                       @* @foreach (var gender in Model.Generos)
-                          {
-                             @Html.RadioButtonFor(model => model.Genero, gender) @gender<br />
-                          }*@
-
-                       @*@Html.RadioButton("Genero","Hombre")  Hombre: <input checked="checked", id="Gender", name="Gender", type="radio", value="Male" />
-                        
-                       @Html.RadioButton("Genero","Mujer")  Female: <input id="Gender", name="Gender", type="radio", value="Female" />*@
-
+                        <br/>
                     </div>
                 </div>
+                
 
-
-                <div class="col">
-                    <div class="col-md-4 col-12 col-sm-6">
-                        <span class="glyphicon glyphicon-envelope"></span>
-                        @Html.LabelFor(model => model.Correo)
-                        @Html.TextBoxFor(model => model.Correo, new { @class = "form-control", @id = "txtEmail", placeholder = "correo@dominio.com", @onblur = "return ValidarEmail(this.value,'lblErrorCorreo')" })
-                        @Html.ValidationMessageFor(model => model.Correo)
-                         <label id="lblErrorCorreo"></label>
-                    </div>
-                </div>
-
-                @*<div class="col">
-                    <div class="col-md-4 col-12 col-sm-6">
-                        <span class="glyphicon glyphicon-envelope"></span>           
-                        <label>Confirmar Correo
-                        <input type="text" name="Confirmar_email" id="txtConfirmarEmail" />
-                        <span id='message'></span>
-                        </label>
-                        <label id="lblErrorComparar"></label>
-                    </div>
-                </div>*@
                 
                 <div class="col">
                     <div class="col-md-4 col-12 col-sm-6">
@@ -164,9 +137,15 @@
                         @Html.LabelFor(model => model.Password)
                         @Html.TextBoxFor(model => model.Password, new { @class = "form-control", @id = "txtPass" })
                         @Html.ValidationMessageFor(model => model.Password)
-
                     </div>
                 </div>
+
+               @* <div class="col">
+                    <div class="col-md-4 col-12 col-sm-6">
+                         <label for="ValidarPass">Validar password</label><br>
+                         <input type="text" id="txtValidarPassword"><br>                          
+                    </div>
+                </div>*@
 
                 <div class="col">
                     <div class="col-md-4 col-12 col-sm-6">

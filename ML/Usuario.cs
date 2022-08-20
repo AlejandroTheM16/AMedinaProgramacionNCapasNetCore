@@ -23,10 +23,6 @@ namespace ML
         [MaxLength(length: 1)]
         public string? Genero { get; set; }
 
-        public string[] Generos = new[] { "Hombre", "Mujer" };
-
-
-
         public string? Correo { get; set; }
 
         [MinLength(length: 10, ErrorMessage = "Ingresa un telefono de al menos 10 digitos")]
