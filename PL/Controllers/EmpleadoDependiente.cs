@@ -6,7 +6,7 @@ namespace PL.Controllers
     public class EmpleadoDependiente : Controller
     {
 
-        const string SessionName = "NumeroEmpleado";
+        //const string SessionName = "NumeroEmpleado";
 
         [HttpGet]
         public ActionResult EmpleadoGetAll()
@@ -113,21 +113,19 @@ namespace PL.Controllers
         //}
 
         [HttpGet]
-        public ActionResult DependienteGetById(string NumeroEmpleado) {
+        public ActionResult DependienteGetById(string? NumeroEmpleado) {            
 
-
-
-            ML.Dependiente dependiente = new ML.Dependiente();
-            dependiente.Empleado = new ML.Empleado();
-            //ML.Result resultEmpleado = BL.Empleado.GetById(NumeroEmpleado);
-            dependiente.DependienteTipo = new ML.DependienteTipo();
-            ML.Result resutlDependienteTipo = BL.DependienteTipo.GetAllEF();
-            HttpContext.Session.SetString(SessionName, NumeroEmpleado);
-
-
-            if (NumeroEmpleado != null)
+            if (NumeroEmpleado == null)
             {
                 
+               NumeroEmpleado = HttpContext.Session.GetString("NumeroEmpleado".ToString());
+
+            }
+                ML.Dependiente dependiente = new ML.Dependiente();
+                dependiente.DependienteTipo = new ML.DependienteTipo();
+                dependiente.Empleado = new ML.Empleado();
+                //ML.Result resultEmpleado = BL.Empleado.GetById(NumeroEmpleado);               
+                ML.Result resutlDependienteTipo = BL.DependienteTipo.GetAllEF();
 
                 if (resutlDependienteTipo.Correct)
                 {
@@ -138,9 +136,9 @@ namespace PL.Controllers
                     {
                         //dependiente = (ML.Dependiente)result.Object;
                         dependiente.Dependientes = result.Objects;
-                        //dependiente.Empleado.Empleados = resultEmpleado.Objects;
+                        //dependiente.Empleado.Empleados = resultEmpleado.Objects;                        
                         dependiente.DependienteTipo.DependienteTipos = resutlDependienteTipo.Objects;
-                       
+                        HttpContext.Session.SetString("NumeroEmpleado", NumeroEmpleado);
                         return View(dependiente);
 
                     }
@@ -154,14 +152,14 @@ namespace PL.Controllers
                     
                 }
 
-            }
-            else {
+            
+            //else {
 
-                //dependiente.Empleado.Empleados = resultEmpleado.Objects;             
                 
-                return View(dependiente);
+            //    HttpContext.Session.GetString(SessionName);
+            //    return View(DependienteGetById(NumeroEmpleado));
 
-            }
+            //}
 
             return View("Modal");
         
@@ -170,7 +168,7 @@ namespace PL.Controllers
         [HttpPost]
         public ActionResult Form(ML.Dependiente dependiente) {
 
-            HttpContext.Session.GetString(SessionName);
+            HttpContext.Session.GetString("NumeroEmpleado");
 
             if (dependiente.IdDependiente == 0)
             {
@@ -212,7 +210,7 @@ namespace PL.Controllers
 
             }
 
-            return View(dependiente);
+            return View(DependienteGetById(dependiente.Empleado.NumeroEmpleado));
         
         }
 
@@ -227,7 +225,7 @@ namespace PL.Controllers
 
             if (IdDependiente == null)
             {
-                dependiente.Empleado.NumeroEmpleado = HttpContext.Session.GetString(SessionName);
+                HttpContext.Session.GetString("NumeroEmpleado");
                 dependiente.DependienteTipo.DependienteTipos = resultDependienteTipo.Objects;
                 return View(dependiente);
 
@@ -238,10 +236,12 @@ namespace PL.Controllers
 
                 if (result.Correct)
                 {
+                    
                     dependiente = (ML.Dependiente)result.Object;
                     //dependiente.Dependientes = result.Objects;
                     //dependiente.Empleado.Empleados = resultEmpleado.Objects;
                     dependiente.DependienteTipo.DependienteTipos = resultDependienteTipo.Objects;
+                    
                     return View(dependiente);
 
                 }

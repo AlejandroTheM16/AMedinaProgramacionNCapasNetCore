@@ -141,14 +141,6 @@
                     </div>
                 </div>           
 
-                
-                <div hidden>
-                    <div class="col-md-4 col-12 col-sm-6">
-                        @Html.LabelFor(model => model.Empleado.NumeroEmpleado)
-                        @Html.TextBoxFor(model => model.Empleado.NumeroEmpleado, new { @class = "form-control", @id = "txtStatus" })
-                        @Html.ValidationMessageFor(model => model.Empleado.NumeroEmpleado)
-                    </div>
-                </div>
 
                 @Html.HiddenFor(model => model.Empleado.NumeroEmpleado)
 
