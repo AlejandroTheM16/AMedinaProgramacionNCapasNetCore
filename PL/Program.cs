@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.EntityFrameworkCore;
 using PL.Data;
 
@@ -23,6 +24,11 @@ builder.Services.AddSession(options =>
 
 builder.Services.AddControllers(
    options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
+
+//builder.Services.Configure<RazorViewEngineOptions>(o => {
+//    o.ViewLocationFormats.Clear();
+//    o.ViewLocationFormats.Add("/Views/{1}/{0}" + RazorViewEngine.ViewExtension);
+//  });
 
 var app = builder.Build();
 
@@ -50,7 +56,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 app.MapRazorPages();
 
 app.Run();

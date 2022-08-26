@@ -258,6 +258,34 @@ namespace PL.Controllers
         
         }
 
+        public ActionResult Delete(int IdDependiente) { 
+
+            ML.Dependiente dependiente = new ML.Dependiente();
+
+            if (IdDependiente != null) {
+
+                ML.Result result = BL.Dependiente.Delete(IdDependiente);
+
+                if (result.Correct)
+                {
+
+                    ViewBag.Mensaje = "-Se elimino el dependiente-";
+                    return View("Modal");
+
+                }
+                else {
+
+                    ViewBag.Mensaje = "Ocurrio Un error al eliminar los datos" + result.Message;
+                    return View("Modal");
+
+                }
+            
+            }
+
+            return View("Modal");
+        
+        }
+
         
     }
 }

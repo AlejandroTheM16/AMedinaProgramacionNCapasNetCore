@@ -18,31 +18,32 @@
     @using (Html.BeginForm("GetAll", "Usuario", FormMethod.Post, new { enctype = "multipart/form-data" }))
             {
 
-                <div class="col">
+              <div class="row"> 
+
+
                     <div class="col-md-4 col-12 col-sm-6">
-                        @Html.LabelFor(model => model.Nombre)
+                        <span class="bi bi-person"> </span>    
+                        @Html.LabelFor(model => model.Nombre) 
                         @Html.TextBoxFor(model => model.Nombre, new { @class = "form-control", @id = "txtNombreUsuario" })
-                        @Html.ValidationMessageFor(model => model.Nombre)
+                        @Html.ValidationMessageFor(model => model.Nombre)                                                                             
+
                     </div>
-                </div>
 
-
-                <div class="col">
                     <div class="col-md-4 col-12 col-sm-6">
+                        <span class="bi bi-person"> </span>   
                         @Html.LabelFor(model => model.ApellidoPaterno)
                         @Html.TextBoxFor(model => model.ApellidoPaterno, new { @class = "form-control", @id = "txtApellidoPaterno" })
                         @Html.ValidationMessageFor(model => model.ApellidoPaterno)
                     </div>
-                </div>
 
-
-                <div class="col">
                     <div class="col-md-4 col-12 col-sm-6">
+                        <span class="bi bi-person"> </span>   
                         @Html.LabelFor(model => model.ApellidoMaterno)
                         @Html.TextBoxFor(model => model.ApellidoMaterno, new { @class = "form-control", @id = "txtApellidoMaterno" })
-                        @Html.ValidationMessageFor(model => model.ApellidoMaterno)
+                        @Html.ValidationMessageFor(model => model.ApellidoMaterno)                      
                     </div>
-                </div>
+
+              </div>                
                  
 
                 <div class="col">
@@ -88,7 +89,7 @@
         @foreach (ML.Usuario usuario in Model.Usuarios)
         {
             <tr>
-                <td><a class="btn btn-warning glyphicon glyphicon-edit" href="@Url.Action("Form", "Usuario", new { Id_Usuario = usuario.Id_Usuario })"></a></td>
+                <td><a class="btn btn-warning bi bi-pencil-square" href="@Url.Action("Form", "Usuario", new { Id_Usuario = usuario.Id_Usuario })"></a></td>
                 <td hidden>@usuario.Id_Usuario</td>
                 <td>@usuario.Nombre @usuario.ApellidoPaterno @usuario.ApellidoMaterno</td>
                 <td>@usuario.Genero</td>
@@ -128,7 +129,7 @@
        
                                
 
-                <td><a class="btn btn-danger glyphicon glyphicon-trash" href="@Url.Action("Delete", "Usuario", new { Id_Usuario= usuario.Id_Usuario})" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
+                <td><a class="btn btn-danger bi bi-person-x-fill" href="@Url.Action("Delete", "Usuario", new { Id_Usuario= usuario.Id_Usuario})" onclick="return confirm('Estas seguro que deseas eliminar este registro?');"></a></td>
             </tr>
         }
 

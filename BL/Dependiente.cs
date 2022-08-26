@@ -259,5 +259,43 @@ namespace BL
         }
 
 
+        public static ML.Result Delete(int IdDependiente) {
+
+            ML.Result result = new ML.Result();
+
+            try
+            {
+
+                using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext()) {
+
+                    var query = context.Database.ExecuteSqlRaw($"DependienteDelete {IdDependiente}");
+
+                    if (query >= 1)
+                    {
+
+                        result.Correct = true;
+
+                    }
+                    else {
+
+                        result.Correct = false;
+
+                    }
+                }
+
+            }
+            catch (Exception Ex)
+            {
+
+                result.Correct = false;
+                result.Message = Ex.Message;
+                result.Ex = Ex;
+            }
+
+            return result;
+        
+        }
+
+
     }
 }

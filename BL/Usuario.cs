@@ -145,9 +145,11 @@ namespace BL
 
                         result.Object = usuario;
 
+                        result.Correct = true;
+
                     }
 
-                    result.Correct = true;
+                    
                 }
 
             }
@@ -268,7 +270,64 @@ namespace BL
             }
 
             return result;
-        }        
+        }
+
+
+        public static ML.Result GetByUserName(ML.Usuario usuario)
+        {
+
+            ML.Result result = new ML.Result();
+
+            try
+            {
+                using (DL.AMedinaProgramacionNCapasContext context = new DL.AMedinaProgramacionNCapasContext())
+
+                {
+                    var ObjUsuario = context.Usuarios.FromSqlRaw($"UsuarioGetByUsername '{usuario.UserName}','{usuario.Password}'").AsEnumerable().FirstOrDefault();
+
+
+                    if (ObjUsuario != null)
+                    {
+                        ML.Usuario usuariodata = new ML.Usuario();
+                        usuariodata.Rol = new ML.Rol();
+
+                        usuariodata.Id_Usuario = ObjUsuario.IdUsuario;
+                        usuariodata.Nombre = ObjUsuario.Nombre;
+                        usuariodata.ApellidoPaterno = ObjUsuario.ApellidoPaterno;
+                        usuariodata.ApellidoMaterno = ObjUsuario.ApellidoMaterno;
+                        usuariodata.Genero = ObjUsuario.Genero;
+                        usuariodata.Correo = ObjUsuario.Correo;
+                        usuariodata.Telefono = ObjUsuario.Telefono;
+                        usuariodata.FechaNacimiento = ObjUsuario.FechaDeNacimiento.ToString("dd-MM-yyyy");
+                        usuariodata.Rol.IdRol = ObjUsuario.Idrol;
+                        usuariodata.Rol.Nombre = ObjUsuario.NombreRol;
+                        usuariodata.UserName = ObjUsuario.UserName;
+                        usuariodata.Password = ObjUsuario.Password;
+                        usuariodata.CURP = ObjUsuario.Curp;
+                        usuariodata.Imagen = ObjUsuario.Imagen;
+                        usuariodata.Status = ObjUsuario.Status;
+
+                        result.Object = usuariodata;
+
+                        result.Correct = true;
+
+                    }
+
+                    
+                }
+
+            }
+            catch (Exception Ex)
+            {
+
+                result.Correct = false;
+                result.Message = Ex.Message;
+                result.Ex = Ex;
+            }
+
+            return result;
+        }
+
 
 
     }
